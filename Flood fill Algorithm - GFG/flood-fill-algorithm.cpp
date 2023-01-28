@@ -5,27 +5,40 @@ using namespace std;
 // } Driver Code Ends
 class Solution {
 public:
-    void dfs(vector<vector<int>>& image,int sr,int sc,int newColor,int initial,int row[],int col[],vector<vector<int>>& ans){
-        ans[sr][sc]= newColor;
-        for(int i=0;i<4;i++){
-            int n = image.size();
-            int m = image[0].size();
-            int nrow = sr+row[i];
-            int ncol = sc+col[i];
-            if(nrow < n && nrow >=0 && ncol < m && ncol >= 0 && ans[nrow][ncol]!=newColor && image[nrow][ncol]==initial ){
-                dfs(image,nrow,sc+col[i],newColor,initial,row,col,ans);
-            }
-        }
-    }
     vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int newColor) {
         // Code here 
-        int initial = image[sr][sc];
-        int row[4] = {0,-1,0,1};
-        int col[4] = {-1,0,1,0};
-        vector<vector<int>> ans = image;
-      
-        dfs(image,sr,sc,newColor,initial,row,col,ans);
-        return ans;
+        int n = image.size();
+        int m = image[0].size();
+        vector<vector<int>> v(n,vector<int>(m,0));
+        
+        queue<pair<int,int>> q;
+        int org = image[sr][sc];
+        v[sr][sc] = 1;
+        q.push({sr,sc});
+        int drow[] = {-1,0,1,0};
+        int dcol[] = {0,1,0,-1};
+        while(!q.empty()){
+            int row = q.front().first;
+            int col = q.front().second;
+            q.pop();
+            for(int i=0;i<4;i++){
+                int nrow = row+drow[i];
+                int ncol = col+dcol[i];
+                if(nrow>=0 && nrow < n && ncol >=0 && ncol < m && image[nrow][ncol]==org && !v[nrow][ncol]){
+                    v[nrow][ncol] = 1;
+                    q.push({nrow,ncol});
+                }
+            }
+        }
+        
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(v[i][j]){
+                    image[i][j] = newColor;
+                }
+            }
+        }
+        return image;
     }
 };
 
